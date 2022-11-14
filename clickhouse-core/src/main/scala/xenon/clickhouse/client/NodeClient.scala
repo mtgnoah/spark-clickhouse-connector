@@ -96,6 +96,7 @@ class NodeClient(val nodeSpec: NodeSpec) extends AutoCloseable with Logging {
       settings
     ).asInstanceOf[SimpleOutput[Array[JsonNode]] with NamesAndTypes]
 
+  //TODO fix this for every client connection
   def syncInsert[OUT](
     database: String,
     table: String,
@@ -113,6 +114,7 @@ class NodeClient(val nodeSpec: NodeSpec) extends AutoCloseable with Logging {
       .query(sql, queryId)
       .decompressClientRequest(inputCompressionType)
       .format(ClickHouseFormat.valueOf(outputFormat))
+    req.option(ClickHouseClientOption.SOCKET_TIMEOUT, 300000)
     settings.foreach { case (k, v) => req.set(k, v) }
     Try(req.data(data).executeAndWait()) match {
       case Success(resp) => Right(deserializer(resp.getInputStream))
@@ -133,6 +135,7 @@ class NodeClient(val nodeSpec: NodeSpec) extends AutoCloseable with Logging {
     val req = client.connect(node)
       .query(sql, queryId).asInstanceOf[ClickHouseRequest[_]]
       .format(ClickHouseFormat.valueOf(outputFormat)).asInstanceOf[ClickHouseRequest[_]]
+    req.option(ClickHouseClientOption.SOCKET_TIMEOUT, 300000)
     settings.foreach { case (k, v) => req.set(k, v).asInstanceOf[ClickHouseRequest[_]] }
     Try(req.executeAndWait()) match {
       case Success(resp) => Right(deserializer(resp.getInputStream))
@@ -168,6 +171,7 @@ class NodeClient(val nodeSpec: NodeSpec) extends AutoCloseable with Logging {
       .query(sql, queryId).asInstanceOf[ClickHouseRequest[_]]
       .compressServerResponse(outputCompressionType).asInstanceOf[ClickHouseRequest[_]]
       .format(ClickHouseFormat.valueOf(outputFormat)).asInstanceOf[ClickHouseRequest[_]]
+    req.option(ClickHouseClientOption.SOCKET_TIMEOUT, 300000)
     settings.foreach { case (k, v) => req.set(k, v).asInstanceOf[ClickHouseRequest[_]] }
     Try(req.executeAndWait()) match {
       case Success(resp) => resp
