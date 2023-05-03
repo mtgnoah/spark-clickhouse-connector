@@ -97,7 +97,6 @@ class NodeClient(val nodeSpec: NodeSpec) extends AutoCloseable with Logging {
       settings
     ).asInstanceOf[SimpleOutput[Array[JsonNode]] with NamesAndTypes]
 
-  //TODO fix this for every client connection
   def syncInsert[OUT](
     database: String,
     table: String,
@@ -167,7 +166,6 @@ class NodeClient(val nodeSpec: NodeSpec) extends AutoCloseable with Logging {
   // //////////////////////////////////////////////////////////////////////////////
   // ///////////////////////// ret ClickHouseResponse /////////////////////////////
   // //////////////////////////////////////////////////////////////////////////////
-//TODO change all methods to have timeouts like this
   def queryAndCheck(
     sql: String,
     outputFormat: String,
