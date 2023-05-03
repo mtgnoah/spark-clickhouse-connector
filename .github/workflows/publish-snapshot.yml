@@ -1,3 +1,4 @@
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -9,39 +10,39 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 name: "Publish Snapshot"
 
 on:
   schedule:
-  - cron: '0 0 * * *'
+    - cron: '0 0 * * *'
 
 jobs:
   publish-snapshot:
     if: ${{ startsWith(github.repository, 'housepower/') }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
         branch:
           - "master"
-          - "branch-0.5"
         scala: [ 2.12, 2.13 ]
-        spark: [ 3.3 ]
+        spark: [ 3.3, 3.4 ]
     steps:
-    - uses: actions/checkout@v2
-      with:
-        ref: ${{ matrix.branch }}
-    - uses: actions/setup-java@v2
-      with:
-        distribution: zulu
-        java-version: 8
-        cache: gradle
-    - name: Publish Snapshot - ${{ matrix.branch }}
-      run: >-
-        ./gradlew clean publish --no-daemon --refresh-dependencies
-        -Dscala_binary_version=${{ matrix.scala }}
-        -Dspark_binary_version=${{ matrix.spark }}
-        -PmavenUser='${{ secrets.NEXUS_USER }}'
-        -PmavenPassword='${{ secrets.NEXUS_PW }}'
-        -PmavenCentralMirror=https://maven-central.storage-download.googleapis.com/maven2/
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ matrix.branch }}
+      - uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 8
+          cache: gradle
+      - name: Publish Snapshot - ${{ matrix.branch }}
+        run: >-
+          ./gradlew clean publish --no-daemon --refresh-dependencies
+          -Dscala_binary_version=${{ matrix.scala }}
+          -Dspark_binary_version=${{ matrix.spark }}
+          -PmavenUser='${{ secrets.NEXUS_USER }}'
+          -PmavenPassword='${{ secrets.NEXUS_PW }}'
+          -PmavenCentralMirror=https://maven-central.storage-download.googleapis.com/maven2/

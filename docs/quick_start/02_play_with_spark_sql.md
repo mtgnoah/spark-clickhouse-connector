@@ -16,7 +16,7 @@ license: |
 Play with Spark SQL
 ===
 
-Note: For SQL-only use cases, [Apache Kyuubi(Incubating)](https://github.com/apache/incubator-kyuubi) is recommended
+Note: For SQL-only use cases, [Apache Kyuubi](https://github.com/apache/kyuubi) is recommended
 for Production.
 
 ## Launch Spark SQL CLI
@@ -26,7 +26,7 @@ $SPARK_HOME/bin/spark-sql \
   --conf spark.sql.catalog.clickhouse=xenon.clickhouse.ClickHouseCatalog \
   --conf spark.sql.catalog.clickhouse.host=${CLICKHOUSE_HOST:-127.0.0.1} \
   --conf spark.sql.catalog.clickhouse.protocol=http \
-  --conf spark.sql.catalog.clickhouse.http_port=${CLICKHOUSE_GRPC_PORT:-8123} \
+  --conf spark.sql.catalog.clickhouse.http_port=${CLICKHOUSE_HTTP_PORT:-8123} \
   --conf spark.sql.catalog.clickhouse.user=${CLICKHOUSE_USER:-default} \
   --conf spark.sql.catalog.clickhouse.password=${CLICKHOUSE_PASSWORD:-} \
   --conf spark.sql.catalog.clickhouse.database=default \

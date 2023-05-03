@@ -16,6 +16,7 @@ plugins {
     id "idea"
     id "org.scoverage" version "7.0.1" apply false
     id "org.sonarqube" version "3.4.0.2513"
+    id "com.diffplug.spotless" version "6.12.1" apply false
     id "org.nosphere.apache.rat" version "0.8.0"
     id "com.github.maiflai.scalatest" version "0.32" apply false
     id "com.github.johnrengelman.shadow" version "7.1.2" apply false
@@ -23,13 +24,12 @@ plugins {
 
 project.ext {
     scala_binary_version = System.getProperty("scala_binary_version")
-    scala_version = scala_binary_version == "2.12" ? project.getProperty("scala_212_version") : project.getProperty("scala_213_version")
     spark_binary_version = System.getProperty("spark_binary_version")
-    jackson_version = project.getProperty("spark_33_jackson_version")
-}
-
-repositories {
-    maven { url = "$mavenCentralMirror" }
+    scala_212_version = spark_binary_version == "3.3" ? project.getProperty("spark_33_scala_212_version") : project.getProperty("spark_34_scala_212_version")
+    scala_version = scala_binary_version == "2.12" ? scala_212_version : scala_213_version
+    antlr_version = spark_binary_version == "3.3" ? project.getProperty("spark_33_antlr_version") : project.getProperty("spark_34_antlr_version")
+    jackson_version = spark_binary_version == "3.3" ? project.getProperty("spark_33_jackson_version") : project.getProperty("spark_34_jackson_version")
+    slf4j_version = spark_binary_version == "3.3" ? project.getProperty("spark_33_slf4j_version") : project.getProperty("spark_34_slf4j_version")
 }
 
 rat {
@@ -56,17 +56,20 @@ rat {
     )
 }
 
-subprojects {
-    apply plugin: "scala"
-    apply plugin: "java-library"
-    apply plugin: "org.scoverage"
-    apply plugin: "com.github.maiflai.scalatest"
+allprojects {
+    version = getProjectVersion()
 
     repositories {
         maven { url = "$mavenCentralMirror" }
     }
+}
 
-    version = getProjectVersion()
+subprojects {
+    apply plugin: "scala"
+    apply plugin: "java-library"
+    apply plugin: "org.scoverage"
+    apply plugin: "com.diffplug.spotless"
+    apply plugin: "com.github.maiflai.scalatest"
 
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -86,7 +89,7 @@ subprojects {
         }
     }
 
-    task slowTest(type: Test) {
+    tasks.register('slowTest', Test) {
         maxParallelForks = 1
         tags {
             include 'org.scalatest.tags.Slow'
@@ -98,6 +101,14 @@ subprojects {
         reportDir.set(file("${rootProject.buildDir}/reports/scoverage"))
         highlighting.set(false)
         minimumRate.set(0.0)
+    }
+
+    spotless {
+        scala {
+            scalafmt("3.6.1")
+                    .configFile("${rootProject.projectDir}/.scalafmt.conf")
+                    .scalaMajorVersion("2.12")
+        }
     }
 }
 

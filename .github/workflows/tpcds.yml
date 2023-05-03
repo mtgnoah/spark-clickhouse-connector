@@ -1,3 +1,4 @@
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -9,26 +10,30 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-name: "Build and Test"
+name: "TPC-DS"
+
 on:
   push:
     branches:
       - "master"
+      - "branch-*"
   pull_request:
     branches:
       - "master"
+      - "branch-*"
 
 jobs:
-  tpcds-tests:
-    runs-on: ubuntu-20.04
+  run-tpcds-sf1:
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
-        spark: [ 3.3 ]
+        spark: [ 3.3, 3.4 ]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
         with:
           distribution: zulu
           java-version: 8

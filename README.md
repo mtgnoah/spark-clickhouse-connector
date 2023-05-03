@@ -15,12 +15,27 @@ See the [documentation](https://housepower.github.io/spark-clickhouse-connector/
 
 - Java 8 or 11
 - Scala 2.12 or 2.13
-- Apache Spark 3.3
+- Apache Spark 3.3 or 3.4
 
 Notes:
 1. As of 0.5.0, this connector switches from ClickHouse raw gRPC Client to 
    [ClickHouse Official Java Client](https://github.com/ClickHouse/clickhouse-jdbc), which brings HTTP protocol support,
-   extending the range of supported versions of ClickHouse Server.
+   extends the range of supported versions of ClickHouse Server.
+2. Since 0.6.0, HTTP becomes the default protocol.
+3. Since 0.7.0, gRPC is deprecated and not recommended, it may be removed in the future.
+
+## Compatible Matrix
+
+| Version | Compatible Spark Versions | ClickHouse JDBC version |
+|---------|---------------------------|-------------------------|
+| 0.8.0   | Spark 3.3, 3.4            | 0.4.6                   |
+| 0.7.0   | Spark 3.3, 3.4            | 0.4.5                   |
+| 0.6.0   | Spark 3.3                 | 0.3.2-patch11           |
+| 0.5.0   | Spark 3.2, 3.3            | 0.3.2-patch11           |
+| 0.4.0   | Spark 3.2, 3.3            | Not depend on           |
+| 0.3.0   | Spark 3.2, 3.3            | Not depend on           |
+| 0.2.1   | Spark 3.2                 | Not depend on           |
+| 0.1.2   | Spark 3.2                 | Not depend on           |
 
 ## Build
 
